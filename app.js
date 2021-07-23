@@ -83,26 +83,35 @@ const makeGalery = galleryItems.map(makeGaleryMarkup).join('')
 
 galleryRef.insertAdjacentHTML('afterbegin', makeGalery)
 
-/* const image = document.querySelector('.gallery__link') */
 const image = document.querySelector('.gallery__image')
-galleryRef.addEventListener('click', openFunktion)
-closeButtom.addEventListener('click', (event) => { lightboxImage.src = 0; return lightbox.classList.toggle('is-open')})
+galleryRef.addEventListener('click', openLightBox)
+closeButtom.addEventListener('click', closeLightBox)
 
 
-function openFunktion(event) {
+function openLightBox(event) {
   if (!event.target.dataset.source) {
     return
   }
   event.preventDefault();
   lightboxImage.src = event.target.dataset.source
-    return lightbox.classList.toggle('is-open')
+  lightbox.classList.add('is-open')
+    document.addEventListener('keydown',closeOnEsc)
 }
 
-const overlay = document.querySelector('.lightbox__overlay')
-overlay.addEventListener('click', (event) => { lightboxImage.src = 0; return lightbox.classList.toggle('is-open')})
+function closeLightBox(event) {
+  lightboxImage.src = "";
+  lightbox.classList.remove('is-open')
+    document.removeEventListener('keydown',closeOnEsc)
+  
+}
 
-document.addEventListener('keydown', (event) => {
-  if (event.code === 'Escape') {
-    lightboxImage.src = 0; return lightbox.classList.toggle('is-open')
+
+
+const overlay = document.querySelector('.lightbox__overlay')
+overlay.addEventListener('click', closeLightBox)
+
+function closeOnEsc(event) {
+  if (event.code === 'Escape' && lightbox.classList.contains('is-open')) {
+    closeLightBox()
   }
-})
+}
